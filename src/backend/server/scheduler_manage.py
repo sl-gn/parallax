@@ -73,6 +73,28 @@ class SchedulerManage:
             block_end_index=1,
         )
 
+    def change_model(self, model_name):
+        self.change_model(model_name, self.init_nodes_num, self.is_local_network)
+
+    def change_model(self, model_name, init_nodes_num, is_local_network=True):
+        logger.debug(
+            f"SchedulerManage change model: model_name={model_name}, init_nodes_num={init_nodes_num}"
+        )
+        # 是否可以切换 local 和 remote network
+        # 如果切换，需要重启 lattica，就无法保持和 node 的连接，让 node 重新加载 layer
+        # self.is_local_network = is_local_network
+        # if not is_local_network and not self.initial_peers and not self.relay_servers:
+        #     logger.debug("Using public relay servers")
+        #     self.initial_peers = PUBLIC_INITIAL_PEERS
+        #     self.relay_servers = PUBLIC_RELAY_SERVERS
+
+        # 切换 model，并重新分配并加载 layer
+        self.model_name = model_name
+        self.init_nodes_num = init_nodes_num
+
+        model_info = get_model_info(model_name, self.use_hfcache)
+        self.scheduler.change_model(model_info)
+
     def is_running(self):
         """
         Returns True if the scheduler is running, False otherwise.

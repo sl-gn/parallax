@@ -56,8 +56,8 @@ async def scheduler_init(raw_request: Request):
     init_nodes_num = request_data.get("init_nodes_num")
     is_local_network = request_data.get("is_local_network")
     if scheduler_manage.is_running():
-        # todo reinit
-        pass
+        # reinit
+        scheduler_manage.change_model(model_name, init_nodes_num, is_local_network)
     else:
         scheduler_manage.run(model_name, init_nodes_num, is_local_network)
     return JSONResponse(

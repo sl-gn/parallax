@@ -149,6 +149,16 @@ class BaseLayerAllocator:
         """Number of nodes in the allocator."""
         return len(self.nodes)
 
+    def change_model(self, model_info: ModelInfo) -> None:
+        """Change the model of the allocator."""
+        self.model_info = model_info
+        self.num_total_layers = model_info.num_layers
+
+        for n in self.nodes:
+            n.model_info = model_info
+            if n.start_layer is not None and n.end_layer is not None:
+                self.deallocate(n)
+
     def validate_allocation(self, start_layer: int, end_layer: int):
         """Validate the allocation."""
         if start_layer < 0 or end_layer > self.num_total_layers:

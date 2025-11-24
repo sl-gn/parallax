@@ -618,6 +618,18 @@ class Scheduler:
             except Exception as exc:
                 logger.warning(f"Leave failed for {node_id}: {exc}")
 
+    def change_model(self, model_info: ModelInfo) -> None:
+        """Change the model of the scheduler."""
+        self.model_info = model_info
+        self.num_layers = model_info.num_layers
+
+        self._bootstrapped = False
+        self._bootstrapped_event.clear()
+
+        self.layer_allocator.change_model(model_info)
+
+        self.bootstrap()
+
     def stop(self) -> None:
         """Signal background threads to stop and wake any waiters."""
         self._stop_event.set()
